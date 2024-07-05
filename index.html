@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokedex</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+    <div class="container mx-auto mt-4 px-4">
+        <!-- Header -->
+        <header class="flex justify-between items-center">
+            <h2 class="text-xl font-bold">Pokedex</h2>
+        </header>
+
+        <!-- Search Bar -->
+        <div class="row mt-4">
+            <form class="flex col-md-7 offset-md-3 space-x-2" role="search" id="searchForm">
+                <input class="form-control me-2 p-2 border rounded" type="search" placeholder="Search Pokemon..."
+                    aria-label="Search" id="searchInput">
+                <button class="btn btn-outline-success p-2 border rounded" type="submit"
+                    id="searchButton">Search</button>
+            </form>
+        </div>
+
+        <!-- Pokemon List (Cards) -->
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="pokecontainer">
+            <!-- Example card for a Pokemon -->
+        </div>
+
+        <!-- Detailed View for Each Pokemon -->
+        <div class="row mt-4">
+            <nav aria-label="Page navigation">
+                <ul class="pagination flex justify-center w-25 h-25 space-x-3" id="pagination"></ul>
+            </nav>
+        </div>
+    </div>
+
+    <script src="./index.js"></script>
+</body>
+
+</html>

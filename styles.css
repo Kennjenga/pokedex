@@ -1,0 +1,32 @@
+:root{
+    --text-color: white;
+    --font-type: Verdana, Tahoma, sans-serif,serif;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: 15px;
+    /* outline: 2px solid black; */
+    color: var(--text-color);
+    font-family: var(--font-type);
+}
+body{
+    background: radial-gradient(circle, rgba(0, 92, 191,0.95) 0%, rgba(255,203,5,0.8) 100%);
+    height: 100vh;
+}
+.active-page .page-link {
+    background-color: #28a745;
+    color: white;
+}
+.card-body .card-text{
+    color: black;
+}
+#pokecontainer #card{
+    background-color: rgba(0, 92, 191,0.4);
+    backdrop-filter: blur(30px);
+}
+#searchInput{
+    color: black;
+}
