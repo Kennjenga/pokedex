@@ -3,11 +3,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchButton = document.getElementById("searchButton");
   const pokemonContainer = document.getElementById("pokecontainer");
   const pagination = document.getElementById("pagination");
+  const typeFilter = document.getElementById("typeFilter");
+  const modal = document.getElementById("pokemonModal");
+  const modalDetails = document.getElementById("modalDetails");
+  const closeModal = document.querySelector(".close");
   let currentPage = 1;
   const limit = 12;
   let totalPages = 1;
   let allPokemons = [];
-  let paginatedPokemons = [];
+  let filteredPokemons = [];
 
   async function fetchAllPokemons() {
     const limit = 200; // Fetch in chunks of 200
@@ -49,13 +53,13 @@ document.addEventListener("DOMContentLoaded", () => {
   async function renderPoke(page = 1) {
     try {
       const offset = (page - 1) * limit;
-      paginatedPokemons = allPokemons.slice(offset, offset + limit);
+      const paginatedPokemons = filteredPokemons.slice(offset, offset + limit);
       pokemonContainer.innerHTML = ""; // Clear existing cards
       for (const pokemon of paginatedPokemons) {
         const specificPoke = await fetchSpecificApi(pokemon.url);
         renderPokemonCard(specificPoke);
       }
-      totalPages = Math.ceil(allPokemons.length / limit);
+      totalPages = Math.ceil(filteredPokemons.length / limit);
       renderPagination();
     } catch (error) {
       console.error("Error rendering Pokémon cards:", error);
@@ -71,17 +75,88 @@ document.addEventListener("DOMContentLoaded", () => {
       .join(", ");
 
     const cardContent = `
-        <div class="bg-white shadow-lg rounded-lg overflow-hidden" id="card">
-          <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
-          <div class="p-3">
-            <h5 class="text-2xl font-bold capitalize text-white">${pokemon.name}</h5> <!-- Increase text size -->
-            <p class="text-white-700">Type: ${typeNames}</p>
-          </div>
+      <div class="bg-white shadow-lg rounded-lg overflow-hidden flex sm:flex-col justify-center items-start px-3" id="card">
+        <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
+        <div class="p-3">
+          <h5 class="text-2xl font-bold capitalize text-black">${pokemon.name}</h5>
+          <p class="text-black">Type: ${typeNames}</p>
+          <button class="bg-green-500 px-2 py-1 mt-2 hover:bg-green-700 rounded" id="more-details-btn" data-url="${pokemon.url}">More Details</button>
         </div>
-      `;
+      </div>
+    `;
 
     card.innerHTML = cardContent;
     pokemonContainer.append(card);
+
+    // Add event listener to the "More Details" button
+    const moreDetailsBtn = card.querySelector("#more-details-btn");
+    moreDetailsBtn.addEventListener("click", async () => {
+      const specificPoke = await fetchSpecificApi(
+        `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
+      );
+      displayPokemonDetails(specificPoke);
+    });
+  }
+
+  function displayPokemonDetails(pokemon) {
+    const abilities = pokemon.abilities
+      .map((ability) => ability.ability.name)
+      .join(", ");
+    const stats = pokemon.stats
+      .map(
+        (stat) =>
+          `<li  class="text-black">${stat.stat.name}: ${stat.base_stat}</li>`
+      )
+      .join("");
+
+    const detailsContent = `
+      <div class=" rounded-lg overflow-hidden p-5">
+        <h3 class="text-3xl font-bold capitalize text-black">${
+          pokemon.name
+        }</h3>
+        <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
+        <p class="text-black">Type: ${pokemon.types
+          .map((typeInfo) => typeInfo.type.name)
+          .join(", ")}</p>
+        <p class="text-black">Abilities: ${abilities}</p>
+        <ul class="text-black">Stats: ${stats}</ul>
+      </div>
+    `;
+
+    modalDetails.innerHTML = detailsContent;
+    modal.style.display = "block";
+  }
+
+  closeModal.addEventListener("click", () => {
+    modal.style.display = "none";
+  });
+
+  window.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  });
+
+  async function fetchTypes(type) {
+    try {
+      const response = await fetch(`https://pokeapi.co/api/v2/type/${type}`);
+      const data = await response.json();
+      return data.pokemon.map((p) => p.pokemon);
+    } catch (error) {
+      console.error("Error fetching type data:", error);
+    }
+  }
+
+  async function fetchspecificTypes() {
+    const type = typeFilter.value.toLowerCase();
+    if (type === "all") {
+      filteredPokemons = allPokemons;
+    } else {
+      const pokemonsByType = await fetchTypes(type);
+      filteredPokemons = pokemonsByType;
+    }
+    currentPage = 1;
+    renderPoke(currentPage);
   }
 
   async function searchPoke(event) {
@@ -113,10 +188,10 @@ document.addEventListener("DOMContentLoaded", () => {
     prevButton.classList.add("page-item", "mx-1");
     if (currentPage === 1) prevButton.classList.add("disabled");
     prevButton.innerHTML = `
-          <a class="page-link" href="#" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        `;
+      <a class="page-link" href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    `;
     prevButton.addEventListener("click", (event) => {
       event.preventDefault();
       if (currentPage > 1) {
@@ -154,10 +229,10 @@ document.addEventListener("DOMContentLoaded", () => {
     nextButton.classList.add("page-item", "mx-1");
     if (currentPage === totalPages) nextButton.classList.add("disabled");
     nextButton.innerHTML = `
-          <a class="page-link" href="#" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        `;
+      <a class="page-link" href="#" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    `;
     nextButton.addEventListener("click", (event) => {
       event.preventDefault();
       if (currentPage < totalPages) {
@@ -169,10 +244,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   searchButton.addEventListener("click", searchPoke);
+  typeFilter.addEventListener("change", fetchspecificTypes);
 
   // Fetch all Pokémon data and then render the first page
   fetchAllPokemons().then((data) => {
     allPokemons = data;
+    filteredPokemons = allPokemons; // Initially, all Pokémon are displayed
     renderPoke(currentPage);
   });
 });

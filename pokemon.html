@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokedex</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+    <div class="container mx-auto mt-4 px-4">
+        <!-- Header -->
+        <header class="flex justify-between items-center h-12 rounded shadow px-5">
+            <a href="./index.html" class="hover:bg-green-700 rounded px-3 py-1"><button
+                    class="ms-5 text-xl font-bold">Home</button></a>
+
+            <h2 class="text-xl font-bold">Pokedex</h2>
+        </header>
+
+        <!-- Search and Filter Bar -->
+        <div class="mt-4 grid grid-cols-3 sm:grid-cols-7 gap-4 max-w-5xl">
+            <input class="form-control p-2 border rounded flex-grow col-span-2 sm:col-span-5" type="search"
+                placeholder="Search Pokemon..." aria-label="Search" id="searchInput">
+            <button class="btn btn-outline-success p-2 border rounded hover:bg-green-700 " type="submit"
+                id="searchButton">Search</button>
+            <select class="form-control p-2 border rounded text-black col-span-3 sm:col-span-1" id="typeFilter">
+                <option value="all">All</option>
+                <option value="Fire">Fire</option>
+                <option value="Water">Water</option>
+                <option value="Grass">Grass</option>
+                <option value="Ice">Ice</option>
+                <option value="Poison">Poison</option>
+                <option value="Psychic">Psychic</option>
+                <option value="Rock">Rock</option>
+                <option value="Ghost">Ghost</option>
+                <option value="Dragon">Dragon</option>
+                <option value="Steel">Steel</option>
+                <option value="Fairy">Fairy</option>
+                <option value="Normal">Normal</option>
+                <option value="Electric">Electric</option>
+                <option value="Fighting">Fighting</option>
+                <option value="Ground">Ground</option>
+                <option value="Flying">Flying</option>
+                <option value="Bug">Bug</option>
+                <option value="Dark">Dark</option>
+                <option value="Stellar">Stellar</option>
+                <!-- Type options will be populated dynamically -->
+            </select>
+        </div>
+
+        <!-- Pokemon List (Cards) -->
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="pokecontainer">
+            <!-- Pokemon cards will be inserted here -->
+        </div>
+        <!-- modal -->
+        <div id="pokemonModal" class="modal">
+            <div class="modal-content">
+                <span class="close ms-2">&times;</span>
+                <div id="modalDetails"></div>
+            </div>
+        </div>
+
+
+        <!-- Pagination -->
+        <div class="mt-4 h-10">
+            <nav aria-label="Page navigation">
+                <ul class="pagination flex justify-center space-x-3 text-base" id="pagination"></ul>
+            </nav>
+        </div>
+    </div>
+
+    <script src="./index.js"></script>
+</body>
+
+</html>
