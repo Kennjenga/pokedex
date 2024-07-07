@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let filteredPokemons = [];
 
   async function fetchAllPokemons() {
-    const limit = 200; // Fetch in chunks of 200
+    const limit = 1302; // Fetch in chunks of 200
     let offset = 0;
     let allData = [];
     try {
