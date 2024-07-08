@@ -40,6 +40,6 @@ The application fetches data from the PokeAPI and displays it in a user-friendly
 
 ### Installation and Setup
 ```sh
-   git clone https://github.com/your-username/pokedex-web-app.git  
-   cd pokedex-web-app
+   git clone https://github.com/your-username/tailwind_pokedex.git  
+   cd tailwind_pokedex
 ```
