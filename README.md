@@ -5,7 +5,7 @@ The application fetches data from the PokeAPI and displays it in a user-friendly
 
 ## Hosting
 
-- **Netlify:** [Netlify link](https://friendly-profiterole-1db4a3.netlify.app/)
+- **Netlify:** [Netlify link](https://tailpoke.netlify.app)
 - **GitHub Pages:** [GitHub Pages link](https://kennjenga.github.io/tailwind_pokedex/)
 
 ## Table of Contents
