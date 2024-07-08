@@ -35,9 +35,11 @@ The application fetches data from the PokeAPI and displays it in a user-friendly
     script.js
     pokemon.png
     pokemon.html
-    README.md```
+    README.md
+```
 
 ### Installation and Setup
 ```sh
    git clone https://github.com/your-username/pokedex-web-app.git  
-   cd pokedex-web-app```
+   cd pokedex-web-app
+```
