@@ -10,7 +10,7 @@ The application fetches data from the PokeAPI and displays it in a user-friendly
 
 **Table of Contents**
 
-[TOCM]
+[TOC]
 
 ### Features
 - Search Pokémon: Users can search for Pokémon by name.
