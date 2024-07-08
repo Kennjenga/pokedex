@@ -70,8 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
       .join(", ");
 
     card.innerHTML = `
-      <div class="bg-white shadow-lg rounded-lg overflow-hidden flex sm:flex-col justify-center items-center px-3" id="card">
-        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png" alt="${pokemon.name}">
+      <div class="bg-white shadow-lg rounded-lg overflow-hidden flex sm:flex-col justify-center items-start px-3" id="card">
+        <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
         <div class="p-3">
           <h5 class="text-2xl font-bold capitalize text-black">${pokemon.name}</h5>
           <p class="text-black">Type: ${typeNames}</p>
@@ -108,9 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <h3 class="text-3xl font-bold capitalize text-black">${
           pokemon.name
         }</h3>
-        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${
-          pokemon.id
-        }.png" alt="${pokemon.name}">
+        <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
         <p class="text-black">Type: ${pokemon.types
           .map((typeInfo) => typeInfo.type.name)
           .join(", ")}</p>
