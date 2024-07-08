@@ -7,76 +7,71 @@ document.addEventListener("DOMContentLoaded", () => {
   const modal = document.getElementById("pokemonModal");
   const modalDetails = document.getElementById("modalDetails");
   const closeModal = document.querySelector(".close");
+
   let currentPage = 1;
   const limit = 12;
   let totalPages = 1;
   let allPokemons = [];
   let filteredPokemons = [];
 
-  async function fetchAllPokemons() {
-    const limit = 200; // Fetch in chunks of 200
+  const fetchAllPokemons = async () => {
+    const limit = 200;
     let offset = 0;
     let allData = [];
+
     try {
       while (true) {
         const response = await fetch(
           `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`
         );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
+        if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();
-        allData = allData.concat(data.results);
-        if (data.next === null) break;
+        allData = [...allData, ...data.results];
+        if (!data.next) break;
         offset += limit;
       }
     } catch (error) {
       console.error("Error fetching Pokedex data:", error);
     }
-    return allData;
-  }
 
-  async function fetchSpecificApi(url) {
+    return allData;
+  };
+
+  const fetchSpecificApi = async (url) => {
     try {
       const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const data = await response.json();
-      return data;
+      if (!response.ok) throw new Error("Network response was not ok");
+      return await response.json();
     } catch (error) {
       console.error("Error fetching Pokémon data:", error);
       return null;
     }
-  }
+  };
 
-  async function renderPoke(page = 1) {
-    try {
-      const offset = (page - 1) * limit;
-      const paginatedPokemons = filteredPokemons.slice(offset, offset + limit);
-      pokemonContainer.innerHTML = ""; // Clear existing cards
-      for (const pokemon of paginatedPokemons) {
-        const specificPoke = await fetchSpecificApi(pokemon.url);
-        renderPokemonCard(specificPoke);
-      }
-      totalPages = Math.ceil(filteredPokemons.length / limit);
-      renderPagination();
-    } catch (error) {
-      console.error("Error rendering Pokémon cards:", error);
-    }
-  }
+  const renderPoke = async (page = 1) => {
+    const offset = (page - 1) * limit;
+    const paginatedPokemons = filteredPokemons.slice(offset, offset + limit);
+    pokemonContainer.innerHTML = ""; // Clear existing cards
 
-  function renderPokemonCard(pokemon) {
+    const pokemonPromises = paginatedPokemons.map((pokemon) =>
+      fetchSpecificApi(pokemon.url)
+    );
+    const specificPokemons = await Promise.all(pokemonPromises);
+    specificPokemons.forEach((specificPoke) => renderPokemonCard(specificPoke));
+
+    totalPages = Math.ceil(filteredPokemons.length / limit);
+    renderPagination();
+  };
+
+  const renderPokemonCard = (pokemon) => {
     const card = document.createElement("div");
-
-    // Get all type names
     const typeNames = pokemon.types
       .map((typeInfo) => typeInfo.type.name)
       .join(", ");
 
-    const cardContent = `
-      <div class="bg-white shadow-lg rounded-lg overflow-hidden flex sm:flex-col justify-center items-start px-3" id="card">
-        <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
+    card.innerHTML = `
+      <div class="bg-white shadow-lg rounded-lg overflow-hidden flex sm:flex-col justify-center items-center px-3" id="card">
+        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png" alt="${pokemon.name}">
         <div class="p-3">
           <h5 class="text-2xl font-bold capitalize text-black">${pokemon.name}</h5>
           <p class="text-black">Type: ${typeNames}</p>
@@ -85,20 +80,19 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
-    card.innerHTML = cardContent;
+    card
+      .querySelector("#more-details-btn")
+      .addEventListener("click", async () => {
+        const specificPoke = await fetchSpecificApi(
+          `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
+        );
+        displayPokemonDetails(specificPoke);
+      });
+
     pokemonContainer.append(card);
+  };
 
-    // Add event listener to the "More Details" button
-    const moreDetailsBtn = card.querySelector("#more-details-btn");
-    moreDetailsBtn.addEventListener("click", async () => {
-      const specificPoke = await fetchSpecificApi(
-        `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
-      );
-      displayPokemonDetails(specificPoke);
-    });
-  }
-
-  function displayPokemonDetails(pokemon) {
+  const displayPokemonDetails = (pokemon) => {
     const abilities = pokemon.abilities
       .map((ability) => ability.ability.name)
       .join(", ");
@@ -109,12 +103,14 @@ document.addEventListener("DOMContentLoaded", () => {
       )
       .join("");
 
-    const detailsContent = `
-      <div class=" rounded-lg overflow-hidden p-5">
+    modalDetails.innerHTML = `
+      <div class="rounded-lg overflow-hidden p-5">
         <h3 class="text-3xl font-bold capitalize text-black">${
           pokemon.name
         }</h3>
-        <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
+        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${
+          pokemon.id
+        }.png" alt="${pokemon.name}">
         <p class="text-black">Type: ${pokemon.types
           .map((typeInfo) => typeInfo.type.name)
           .join(", ")}</p>
@@ -122,22 +118,18 @@ document.addEventListener("DOMContentLoaded", () => {
         <ul class="text-black">Stats: ${stats}</ul>
       </div>
     `;
-
-    modalDetails.innerHTML = detailsContent;
     modal.style.display = "block";
-  }
+  };
 
   closeModal.addEventListener("click", () => {
     modal.style.display = "none";
   });
 
   window.addEventListener("click", (event) => {
-    if (event.target === modal) {
-      modal.style.display = "none";
-    }
+    if (event.target === modal) modal.style.display = "none";
   });
 
-  async function fetchTypes(type) {
+  const fetchTypes = async (type) => {
     try {
       const response = await fetch(`https://pokeapi.co/api/v2/type/${type}`);
       const data = await response.json();
@@ -145,63 +137,61 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       console.error("Error fetching type data:", error);
     }
-  }
+  };
 
-  async function fetchspecificTypes() {
+  const fetchspecificTypes = async () => {
     const type = typeFilter.value.toLowerCase();
     if (type === "all") {
       filteredPokemons = allPokemons;
     } else {
-      const pokemonsByType = await fetchTypes(type);
-      filteredPokemons = pokemonsByType;
+      filteredPokemons = await fetchTypes(type);
     }
     currentPage = 1;
     renderPoke(currentPage);
-  }
+  };
 
-  async function searchPoke(event) {
+  const searchPoke = async (event) => {
     event.preventDefault();
-    try {
-      const searchinput = searchInput.value.toLowerCase();
-      const matchingPokemon = allPokemons.find(
-        (pokemon) => pokemon.name.toLowerCase() === searchinput
-      );
+    const searchinput = searchInput.value.toLowerCase();
+    const matchingPokemon = allPokemons.find(
+      (pokemon) => pokemon.name.toLowerCase() === searchinput
+    );
 
-      pokemonContainer.innerHTML = ""; // Clear existing cards
-      if (matchingPokemon) {
-        const specificPoke = await fetchSpecificApi(matchingPokemon.url);
-        renderPokemonCard(specificPoke);
-      } else {
-        console.log("No matching Pokémon found.");
-        renderPoke(currentPage);
-      }
-    } catch (error) {
-      console.error("Error searching Pokémon:", error);
+    pokemonContainer.innerHTML = ""; // Clear existing cards
+    if (matchingPokemon) {
+      const specificPoke = await fetchSpecificApi(matchingPokemon.url);
+      renderPokemonCard(specificPoke);
+    } else {
+      console.log("No matching Pokémon found.");
+      renderPoke(currentPage);
     }
-  }
+  };
 
-  function renderPagination() {
+  const renderPagination = () => {
     pagination.innerHTML = ""; // Clear existing pagination
 
-    // Create previous button
-    const prevButton = document.createElement("li");
-    prevButton.classList.add("page-item", "mx-1");
-    if (currentPage === 1) prevButton.classList.add("disabled");
-    prevButton.innerHTML = `
-      <a class="page-link" href="#" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-      </a>
-    `;
-    prevButton.addEventListener("click", (event) => {
-      event.preventDefault();
-      if (currentPage > 1) {
-        currentPage--;
-        renderPoke(currentPage);
-      }
-    });
-    pagination.appendChild(prevButton);
+    const createPageItem = (page, label, disabled = false) => {
+      const pageItem = document.createElement("li");
+      pageItem.classList.add("page-item", "mx-1");
+      if (disabled) pageItem.classList.add("disabled");
+      if (page === currentPage) pageItem.classList.add("active-page");
 
-    // Calculate the range of pages to be displayed
+      pageItem.innerHTML = `<a class="page-link" href="#" aria-label="${label}">${label}</a>`;
+      pageItem.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (!disabled && page !== currentPage) {
+          currentPage = page;
+          renderPoke(currentPage);
+        }
+      });
+
+      return pageItem;
+    };
+
+    pagination.append(
+      createPageItem(currentPage - 1, "&laquo;", currentPage === 1)
+    );
+
     const maxPagesToShow = 9;
     let startPage = Math.max(currentPage - Math.floor(maxPagesToShow / 2), 1);
     let endPage = Math.min(startPage + maxPagesToShow - 1, totalPages);
@@ -210,43 +200,18 @@ document.addEventListener("DOMContentLoaded", () => {
       startPage = Math.max(endPage - maxPagesToShow + 1, 1);
     }
 
-    // Create page number buttons
     for (let i = startPage; i <= endPage; i++) {
-      const pageButton = document.createElement("li");
-      pageButton.classList.add("page-item", "mx-1");
-      if (i === currentPage) pageButton.classList.add("active-page");
-      pageButton.innerHTML = `<a class="page-link" href="#" data-page="${i}">${i}</a>`;
-      pageButton.addEventListener("click", (event) => {
-        event.preventDefault();
-        currentPage = i;
-        renderPoke(currentPage);
-      });
-      pagination.appendChild(pageButton);
+      pagination.append(createPageItem(i, i));
     }
 
-    // Create next button
-    const nextButton = document.createElement("li");
-    nextButton.classList.add("page-item", "mx-1");
-    if (currentPage === totalPages) nextButton.classList.add("disabled");
-    nextButton.innerHTML = `
-      <a class="page-link" href="#" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
-      </a>
-    `;
-    nextButton.addEventListener("click", (event) => {
-      event.preventDefault();
-      if (currentPage < totalPages) {
-        currentPage++;
-        renderPoke(currentPage);
-      }
-    });
-    pagination.appendChild(nextButton);
-  }
+    pagination.append(
+      createPageItem(currentPage + 1, "&raquo;", currentPage === totalPages)
+    );
+  };
 
   searchButton.addEventListener("click", searchPoke);
   typeFilter.addEventListener("change", fetchspecificTypes);
 
-  // Fetch all Pokémon data and then render the first page
   fetchAllPokemons().then((data) => {
     allPokemons = data;
     filteredPokemons = allPokemons; // Initially, all Pokémon are displayed
