@@ -22,13 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       while (true) {
         const response = await fetch(
-          `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-          }
+          `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`
         );
         if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();
