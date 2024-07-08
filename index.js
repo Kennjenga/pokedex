@@ -22,7 +22,13 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       while (true) {
         const response = await fetch(
-          `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`
+          `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          }
         );
         if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();
@@ -160,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const specificPoke = await fetchSpecificApi(matchingPokemon.url);
       renderPokemonCard(specificPoke);
     } else {
-      console.log("No matching Pokémon found.");
+      pokemonContainer.innerHTML = `<div class="text-center text-red-500">No Pokémon found with the name "${searchinput}".</div>`;
       renderPoke(currentPage);
     }
   };
