@@ -9,8 +9,7 @@ The application fetches data from the PokeAPI and displays it in a user-friendly
 [Github pages](https://kennjenga.github.io/tailwind_pokedex/ "link title")
 
 **Table of Contents**
-
-[TOC]
+[TOCM]
 
 ### Features
 - Search Pokémon: Users can search for Pokémon by name.
