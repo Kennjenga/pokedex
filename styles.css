@@ -18,7 +18,7 @@ img{
     height: 180px;
 }
 body{
-    background: radial-gradient(circle, rgb(191, 157, 19) 0%, rgb(161, 157, 169) 100%);
+    background-color: rgb(191, 157, 19);
     height: 100vh;
 }
 .active-page .page-link {
