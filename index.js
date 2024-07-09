@@ -170,7 +170,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const createPageItem = (page, label, disabled = false) => {
       const pageItem = document.createElement("li");
-      pageItem.classList.add("page-item", "mx-1");
+      pageItem.classList.add(
+        "page-item",
+        "hover:text-2xl",
+        "hover:text-green-500",
+        "mx-1",
+        "max-w-5",
+        "text-xl"
+      );
       if (disabled) pageItem.classList.add("disabled");
       if (page === currentPage) pageItem.classList.add("active-page");
 

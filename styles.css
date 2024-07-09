@@ -39,18 +39,23 @@ body{
 #searchInput, option{
     color: var(--text-color);
 }
+#searchButton{
+    border: 1px solid #28a745;
+
+}
 /* modal */
 /* Modal container */
 .modal {
     display: none; 
     position: fixed; 
+    background-color: rgba(117, 114, 100, 0.95);
     z-index: 1; 
     left: 0;
     top: 0;
     width: 100%; 
     height: 100%; 
     overflow: auto; /* Enable scroll if needed */
-  }
+  } 
   
   /* Modal content */
   .modal-content {
