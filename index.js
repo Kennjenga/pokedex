@@ -73,8 +73,8 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="bg-white shadow-lg rounded-lg overflow-hidden flex sm:flex-col justify-center items-start px-3" id="card">
         <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
         <div class="p-3">
-          <h5 class="text-2xl font-bold capitalize text-black">${pokemon.name}</h5>
-          <p class="text-black">Type: ${typeNames}</p>
+          <h5 class="text-2xl font-bold capitalize text-white">${pokemon.name}</h5>
+          <p class="text-white">Type: ${typeNames}</p>
           <button class="bg-green-500 px-2 py-1 mt-2 hover:bg-green-700 rounded" id="more-details-btn" data-url="${pokemon.url}">More Details</button>
         </div>
       </div>

@@ -1,5 +1,6 @@
 :root{
-    --text-color: black;
+    --text-color: white;
+    --black: black;
     --white: white;
     --font-type: Verdana, Tahoma, sans-serif,serif;
 }
@@ -29,7 +30,7 @@ body{
     color: var(--white);
 }
 #pokecontainer #card{
-    background: radial-gradient(circle, rgba(0, 92, 191, 0.5) 0%, rgba(75, 182, 192, 0.5) 100%);
+    background: linear-gradient(rgba(38, 208, 208, 0.6) 0%, rgba(41, 123, 123, 0.6) 100%);
     backdrop-filter: blur(30px);
 }
 #pokecontainer #card img{
@@ -37,7 +38,7 @@ body{
     width:  150px;
 }
 #searchInput, option{
-    color: var(--text-color);
+    color: var(--black);
 }
 #searchButton{
     border: 1px solid #28a745;
@@ -59,7 +60,7 @@ body{
   
   /* Modal content */
   .modal-content {
-    background-color: #ffffff;
+    background-color: var(--white);
     margin: 5% auto; /* 15% from the top and centered */
     padding: 10px;
     border: 1px solid #888;
@@ -70,7 +71,7 @@ body{
   
   /* Close button */
   .close {
-    color: var(--text-color);
+    color: var(--black);
     float: right;
     font-size: 28px;
     font-weight: bold;
@@ -78,7 +79,7 @@ body{
   
   .close:hover,
   .close:focus {
-    color: var(--text-color);
+    color: var(--black);
     text-decoration: none;
     cursor: pointer;
   }
