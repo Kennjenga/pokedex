@@ -18,7 +18,7 @@ img{
     height: 180px;
 }
 body{
-    background: radial-gradient(circle, rgba(179, 160, 81, 0.5) 0%, rgba(179, 160, 81, 0.5) 100%);
+    background: radial-gradient(circle, rgba(179, 160, 81, 0.9) 0%, rgba(179, 160, 81, 0.9) 100%);
     height: 100vh;
 }
 .active-page .page-link {
@@ -29,7 +29,7 @@ body{
     color: var(--white);
 }
 #pokecontainer #card{
-    background-color: rgba(0, 92, 191, 0.4);
+    background: radial-gradient(circle, rgba(0, 92, 191, 0.5) 0%, rgba(75, 182, 192, 0.5) 100%);
     backdrop-filter: blur(30px);
 }
 #pokecontainer #card img{
@@ -48,7 +48,7 @@ body{
 .modal {
     display: none; 
     position: fixed; 
-    background-color: rgba(117, 114, 100, 0.9);
+    background-color: rgba(117, 114, 100, 0.92);
     z-index: 1; 
     left: 0;
     top: 0;
