@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "hover:text-2xl",
         "hover:text-green-500",
         "mx-1",
-        "max-w-5",
+        "w-4",
         "text-xl"
       );
       if (disabled) pageItem.classList.add("disabled");
