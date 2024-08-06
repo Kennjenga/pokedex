@@ -48,16 +48,52 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const fetchPokemonSpecies = async (pokemonId) => {
+    try {
+      const response = await fetch(
+        `https://pokeapi.co/api/v2/pokemon-species/${pokemonId}`
+      );
+      if (!response.ok) throw new Error("Network response was not ok");
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching Pokémon species data:", error);
+      return null;
+    }
+  };
+
+  const fetchEvolutionChain = async (url) => {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Network response was not ok");
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching evolution chain data:", error);
+      return null;
+    }
+  };
+
+  const fetchPokemonData = async (pokemonName) => {
+    try {
+      const response = await fetch(
+        `https://pokeapi.co/api/v2/pokemon/${pokemonName}`
+      );
+      if (!response.ok) throw new Error("Network response was not ok");
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching Pokémon data:", error);
+      return null;
+    }
+  };
+
   const renderPoke = async (page = 1) => {
     const offset = (page - 1) * limit;
     const paginatedPokemons = filteredPokemons.slice(offset, offset + limit);
     pokemonContainer.innerHTML = ""; // Clear existing cards
 
-    const pokemonPromises = paginatedPokemons.map((pokemon) =>
-      fetchSpecificApi(pokemon.url)
-    );
-    const specificPokemons = await Promise.all(pokemonPromises);
-    specificPokemons.forEach((specificPoke) => renderPokemonCard(specificPoke));
+    for (const pokemon of paginatedPokemons) {
+      const specificPoke = await fetchSpecificApi(pokemon.url);
+      renderPokemonCard(specificPoke);
+    }
 
     totalPages = Math.ceil(filteredPokemons.length / limit);
     renderPagination();
@@ -92,16 +128,22 @@ document.addEventListener("DOMContentLoaded", () => {
     pokemonContainer.append(card);
   };
 
-  const displayPokemonDetails = (pokemon) => {
+  const displayPokemonDetails = async (pokemon) => {
+    const speciesData = await fetchPokemonSpecies(pokemon.id);
+    const evolutionChainUrl = speciesData.evolution_chain.url;
+    const evolutionChain = await fetchEvolutionChain(evolutionChainUrl);
+
     const abilities = pokemon.abilities
       .map((ability) => ability.ability.name)
       .join(", ");
     const stats = pokemon.stats
       .map(
         (stat) =>
-          `<li  class="text-black">${stat.stat.name}: ${stat.base_stat}</li>`
+          `<li class="text-black">${stat.stat.name}: ${stat.base_stat}</li>`
       )
       .join("");
+
+    const evolutionChainHtml = await generateEvolutionChainHtml(evolutionChain);
 
     modalDetails.innerHTML = `
       <div class="rounded-lg overflow-hidden p-5">
@@ -114,9 +156,39 @@ document.addEventListener("DOMContentLoaded", () => {
           .join(", ")}</p>
         <p class="text-black">Abilities: ${abilities}</p>
         <ul class="text-black">Stats: ${stats}</ul>
+        <hr>
+        <div class="mt-4">
+          <h4 class="text-2xl font-bold text-black">Evolution Chain</h4>
+          <div class="flex items-center flex-wrap">
+          ${evolutionChainHtml}
+          </div>
+        </div>
       </div>
     `;
     modal.style.display = "block";
+  };
+
+  const generateEvolutionChainHtml = async (evolutionChain) => {
+    let evolutionHtml = "";
+    let currentEvolution = evolutionChain.chain;
+
+    while (currentEvolution) {
+      const pokemonData = await fetchPokemonData(currentEvolution.species.name);
+      evolutionHtml += `
+        <div class="evo flex items-center text-black m-2">
+          <img src="${pokemonData.sprites.front_default}" alt="${currentEvolution.species.name}" class="mr-2">
+          <h5 class="font-bold capitalize text-black">${currentEvolution.species.name}</h5>
+        </div>
+      `;
+      if (currentEvolution.evolves_to.length > 0) {
+        evolutionHtml += '<span class="mx-2 text-black">→</span>';
+        currentEvolution = currentEvolution.evolves_to[0];
+      } else {
+        currentEvolution = null;
+      }
+    }
+
+    return evolutionHtml;
   };
 
   closeModal.addEventListener("click", () => {
