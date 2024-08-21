@@ -27,7 +27,7 @@ The application fetches data from the PokeAPI and displays it in a user-friendly
 ## Technologies Used
 
 - **HTML:** Structure of the web pages.
-- **CSS:** Styling of the web pages.
+- **Tailwind CSS:** Styling of the web pages.
 - **JavaScript:** Interactivity and dynamic content fetching.
 - **Netlify:** Hosting platform for static sites and serverless functions.
 - **PokeAPI:** Public API for accessing Pokémon data.
